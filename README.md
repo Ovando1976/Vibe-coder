@@ -141,6 +141,13 @@ Run the parity audit against the local ignored archive (when present):
 python3 -m src.main parity-audit
 ```
 
+Render the readiness scorecard for building an awesome assistant:
+
+```bash
+python3 -m src.main readiness-report
+python3 -m src.main readiness-report --json
+```
+
 Inspect mirrored command/tool inventories:
 
 ```bash
@@ -151,6 +158,8 @@ python3 -m src.main tools --limit 10
 ## Current Parity Checkpoint
 
 The port now mirrors the archived root-entry file surface, top-level subsystem names, and command/tool inventories much more closely than before. However, it is **not yet** a full runtime-equivalent replacement for the original TypeScript system; the Python tree still contains fewer executable runtime slices than the archived source.
+
+For project planning and implementation status, use the canonical root docs: `ROADMAP.md` and `PARITY.md`.
 
 
 ## Built with `oh-my-codex`

@@ -1647,7 +1647,7 @@ fn run_remote_trigger(input: RemoteTriggerInput) -> Result<String, String> {
                 "method": method,
                 "status_code": status,
                 "body": truncated_body,
-                "success": status >= 200 && status < 300
+                "success": (200..300).contains(&status)
             }))
         }
         Err(e) => to_pretty_json(json!({
@@ -3144,7 +3144,7 @@ fn persist_agent_terminal_state(
     let mut next_manifest = manifest.clone();
     next_manifest.status = status.to_string();
     next_manifest.completed_at = Some(iso8601_now());
-    next_manifest.current_blocker = blocker.clone();
+    next_manifest.current_blocker.clone_from(&blocker);
     next_manifest.error = error;
     if let Some(blocker) = blocker {
         next_manifest.lane_events.push(LaneEvent {
@@ -5605,6 +5605,7 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::too_many_lines)]
     fn agent_fake_runner_can_persist_completion_and_failure() {
         let _guard = env_lock()
             .lock()
