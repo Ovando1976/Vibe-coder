@@ -42,6 +42,26 @@ class PortingWorkspaceTests(unittest.TestCase):
         )
         self.assertIn('Parity Audit', result.stdout)
 
+    def test_readiness_report_runs(self) -> None:
+        result = subprocess.run(
+            [sys.executable, '-m', 'src.main', 'readiness-report'],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertIn('Awesome Assistant Readiness Report', result.stdout)
+        self.assertIn('Score:', result.stdout)
+
+    def test_readiness_report_json_runs(self) -> None:
+        result = subprocess.run(
+            [sys.executable, '-m', 'src.main', 'readiness-report', '--json'],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        self.assertIn('"score"', result.stdout)
+        self.assertIn('"checks"', result.stdout)
+
     def test_root_file_coverage_is_complete_when_local_archive_exists(self) -> None:
         audit = run_parity_audit()
         if audit.archive_present:
