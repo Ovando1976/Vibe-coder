@@ -1840,15 +1840,14 @@ impl RuntimeMcpState {
     }
 }
 
+type RuntimeMcpStateBuild = (
+    Option<Arc<Mutex<RuntimeMcpState>>>,
+    Vec<RuntimeToolDefinition>,
+);
+
 fn build_runtime_mcp_state(
     runtime_config: &runtime::RuntimeConfig,
-) -> Result<
-    (
-        Option<Arc<Mutex<RuntimeMcpState>>>,
-        Vec<RuntimeToolDefinition>,
-    ),
-    Box<dyn std::error::Error>,
-> {
+) -> Result<RuntimeMcpStateBuild, Box<dyn std::error::Error>> {
     let Some((mcp_state, discovery)) = RuntimeMcpState::new(runtime_config)? else {
         return Ok((None, Vec::new()));
     };
