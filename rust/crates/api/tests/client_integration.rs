@@ -647,6 +647,7 @@ async fn spawn_server(
     state: Arc<Mutex<Vec<CapturedRequest>>>,
     responses: Vec<String>,
 ) -> TestServer {
+    force_localhost_no_proxy();
     let listener = TcpListener::bind("127.0.0.1:0")
         .await
         .expect("listener should bind");
@@ -729,6 +730,17 @@ async fn spawn_server(
         base_url: format!("http://{address}"),
         join_handle,
     }
+}
+
+fn force_localhost_no_proxy() {
+    std::env::remove_var("HTTP_PROXY");
+    std::env::remove_var("HTTPS_PROXY");
+    std::env::remove_var("ALL_PROXY");
+    std::env::remove_var("http_proxy");
+    std::env::remove_var("https_proxy");
+    std::env::remove_var("all_proxy");
+    std::env::set_var("NO_PROXY", "127.0.0.1,localhost");
+    std::env::set_var("no_proxy", "127.0.0.1,localhost");
 }
 
 fn find_header_end(bytes: &[u8]) -> Option<usize> {

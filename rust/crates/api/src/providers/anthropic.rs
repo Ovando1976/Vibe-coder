@@ -911,6 +911,17 @@ mod tests {
         format!("http://{address}/oauth/token")
     }
 
+    fn force_localhost_no_proxy() {
+        std::env::remove_var("HTTP_PROXY");
+        std::env::remove_var("HTTPS_PROXY");
+        std::env::remove_var("ALL_PROXY");
+        std::env::remove_var("http_proxy");
+        std::env::remove_var("https_proxy");
+        std::env::remove_var("all_proxy");
+        std::env::set_var("NO_PROXY", "127.0.0.1,localhost");
+        std::env::set_var("no_proxy", "127.0.0.1,localhost");
+    }
+
     #[test]
     fn read_api_key_requires_presence() {
         let _guard = env_lock();
@@ -1039,6 +1050,7 @@ mod tests {
         let token_url = spawn_token_server(
             "{\"access_token\":\"refreshed-token\",\"refresh_token\":\"fresh-refresh\",\"expires_at\":9999999999,\"scopes\":[\"scope:a\"]}",
         );
+        force_localhost_no_proxy();
         let resolved = resolve_saved_oauth_token(&sample_oauth_config(token_url))
             .expect("resolve refreshed token")
             .expect("token set present");
@@ -1127,6 +1139,7 @@ mod tests {
         let token_url = spawn_token_server(
             "{\"access_token\":\"refreshed-token\",\"expires_at\":9999999999,\"scopes\":[\"scope:a\"]}",
         );
+        force_localhost_no_proxy();
         let resolved = resolve_saved_oauth_token(&sample_oauth_config(token_url))
             .expect("resolve refreshed token")
             .expect("token set present");

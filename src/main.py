@@ -10,6 +10,7 @@ from .parity_audit import run_parity_audit
 from .permissions import ToolPermissionContext
 from .port_manifest import build_port_manifest
 from .query_engine import QueryEnginePort
+from .readiness import build_readiness_report
 from .remote_runtime import run_remote_mode, run_ssh_mode, run_teleport_mode
 from .runtime import PortRuntime
 from .session_store import load_session
@@ -24,6 +25,8 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers.add_parser('summary', help='render a Markdown summary of the Python porting workspace')
     subparsers.add_parser('manifest', help='print the current Python workspace manifest')
     subparsers.add_parser('parity-audit', help='compare the Python workspace against the local ignored TypeScript archive when available')
+    readiness_parser = subparsers.add_parser('readiness-report', help='render an awesome-assistant readiness scorecard')
+    readiness_parser.add_argument('--json', action='store_true', help='emit report as JSON')
     subparsers.add_parser('setup-report', help='render the startup/prefetch setup report')
     subparsers.add_parser('command-graph', help='show command graph segmentation')
     subparsers.add_parser('tool-pool', help='show assembled tool pool with default settings')
@@ -103,6 +106,10 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == 'parity-audit':
         print(run_parity_audit().to_markdown())
+        return 0
+    if args.command == 'readiness-report':
+        report = build_readiness_report()
+        print(report.to_json() if args.json else report.to_markdown())
         return 0
     if args.command == 'setup-report':
         print(run_setup().as_markdown())
